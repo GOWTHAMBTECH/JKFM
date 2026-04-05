@@ -1,0 +1,16 @@
+﻿DO BEGIN
+
+DECLARE DocEntry NVARCHAR(100) = '[%1]';
+
+Select DISTINCT A."DocEntry",A."DocNum",A."DocStatus",A."ObjType",A."DocDate",A."CardCode",A."CardName",
+A."U_AVA_INSPNO" AS "PolicyNo",(Select SUM("LineTotal") from "PCH1" where "DocEntry" = A."DocEntry") AS "Total",
+CASE "DocStatus"
+WHEN 'O' THEN C."U_AVA_BalAmt" - (Select SUM("LineTotal") from "PCH1" where "DocEntry" = A."DocEntry")
+WHEN 'C' THEN C."U_AVA_BalAmt" + (Select SUM("LineTotal") from "PCH1" where "DocEntry" = A."DocEntry")
+ELSE 0
+END AS "Amount"
+from "OPCH" A 
+inner join "PCH1" B on A."DocEntry" = B."DocEntry" inner join "@AVA_INSURANCEH" C on A."U_AVA_INSPNO" = C."Code"
+where A."DocEntry" = :DocEntry;
+
+END

@@ -1,0 +1,103 @@
+﻿USE [ARMA DB]
+GO
+/****** Object:  StoredProcedure [dbo].[@AIS_BillDelivery_XMLGeneration]    Script Date: 20-Jan-21 12:45:09 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Proc [dbo].[@AIS_BillDelivery_XMLGeneration](@list_of_cols_val_tab_del vARCHAR(MAX))
+AS
+bEGIN
+if exists (select  A.DocEntry 
+       from dbo.INV1 as B inner join OINV A on A.DocEntry =B.DocEntry 
+	   inner join OSTC C on C.Code =B.TaxCode
+	   inner join NNM1 D on D.Series =A.Series
+	   inner jOIn OCRD E on E.CardCode =A.CardCode
+       where B.DocEntry  =@list_of_cols_val_tab_del)
+	   begin
+ DECLARE @xml AS XML =  (select  H.DocEntry  As InvEntry
+       ,(
+       select H.CardCode as 'CustomerCode',
+       E.CardName as 'CustomerName' ,Convert(Varchar(10),H.DocDate,103) 'DocumentDate' 
+	   ,Convert(Varchar(10),H.DocDueDate,103) 'DeliveryDate'
+	   ,H.Series ,Cast(H.DocNum As Varchar(100))+'/'+D.SeriesName 'DocumentNumber' ,H.DocEntry,
+	   A.Comments As Remarks,
+	   isnull((Select f.LineTotal from INV3 F 
+	   inner join OEXD G on G.ExpnsCode =F.ExpnsCode Where  F.DocEntry =A.DocEntry 
+	    and isnull(G.U_IsTCS,'N')='N'),0.0)  As LoadCharge,
+		--isnull((Select f.VatSum from INV3 F 
+	 --  inner join OEXD G on G.ExpnsCode =F.ExpnsCode Where  F.DocEntry =A.DocEntry 
+	 --   and isnull(G.U_IsTCS,'N')='N'),0.0)  As LoadChargeTaxAmt,
+		--	isnull((Select f.LineTotal*A1.Rate*0.01/2 from INV3 F 
+	 --  inner join OEXD G on G.ExpnsCode =F.ExpnsCode inner join STC1 A0 on A0.STCCode=f.TaxCode inner join OSTC A1 on A1.Code=A0.STCCode and A0.STAType='-110'  Where  F.DocEntry =A.DocEntry 
+	 --   and isnull(G.U_IsTCS,'N')='N'),0.0)  As LoadChargeCGST,
+		--isnull((Select f.LineTotal*A1.Rate*0.01/2 from INV3 F 
+	 --  inner join OEXD G on G.ExpnsCode =F.ExpnsCode inner join STC1 A0 on A0.STCCode=f.TaxCode inner join OSTC A1 on A1.Code=A0.STCCode and A0.STAType='-100'  Where  F.DocEntry =A.DocEntry 
+	 --   and isnull(G.U_IsTCS,'N')='N'),0.0)  As LoadChargeSGST,
+		--isnull((Select f.LineTotal*A1.Rate*0.01  from INV3 F 
+	 --  inner join OEXD G on G.ExpnsCode =F.ExpnsCode inner join STC1 A0 on A0.STCCode=f.TaxCode inner join OSTC A1 on A1.Code=A0.STCCode and A0.STAType='-120'  Where  F.DocEntry =A.DocEntry 
+	 --   and isnull(G.U_IsTCS,'N')='N'),0.0)  As LoadChargeIGST,
+isnull((Select f.LineTotal from INV3 F 
+	   inner join OEXD G on G.ExpnsCode =F.ExpnsCode Where  F.DocEntry =A.DocEntry 
+	    and isnull(G.U_IsTCS,'N')='Y'),0.0)  As TCS,
+		--isnull((Select f.VatSum from INV3 F 
+	 --  inner join OEXD G on G.ExpnsCode =F.ExpnsCode Where  F.DocEntry =A.DocEntry 
+	 --   and isnull(G.U_IsTCS,'N')='Y'),0.0)  As TCSTaxAmt
+		--,	isnull((Select f.LineTotal*A1.Rate*0.01/2 from INV3 F 
+	 --  inner join OEXD G on G.ExpnsCode =F.ExpnsCode inner join STC1 A0 on A0.STCCode=f.TaxCode inner join OSTC A1 on A1.Code=A0.STCCode and A0.STAType='-110'  Where  F.DocEntry =A.DocEntry 
+	 --   and isnull(G.U_IsTCS,'N')='Y'),0.0)  As TCSCGST,
+		--isnull((Select f.LineTotal*A1.Rate*0.01/2 from INV3 F 
+	 --  inner join OEXD G on G.ExpnsCode =F.ExpnsCode inner join STC1 A0 on A0.STCCode=f.TaxCode inner join OSTC A1 on A1.Code=A0.STCCode and A0.STAType='-100'  Where  F.DocEntry =A.DocEntry 
+	 --   and isnull(G.U_IsTCS,'N')='Y'),0.0)  As TCSSGST,
+		--isnull((Select f.LineTotal*A1.Rate*0.01  from INV3 F 
+	 --  inner join OEXD G on G.ExpnsCode =F.ExpnsCode inner join STC1 A0 on A0.STCCode=f.TaxCode inner join OSTC A1 on A1.Code=A0.STCCode and A0.STAType='-120'  Where  F.DocEntry =A.DocEntry 
+	 --   and isnull(G.U_IsTCS,'N')='Y'),0.0)  As TCSIGST ,
+	    B.ItemCode ,B.Dscription As Description 
+	   ,Quantity ,Price ,C.Rate As TaxPer ,B.DiscPrcnt As Discount
+	   ,isnull((Select f.LineTotal*A1.Rate*0.01/2 from INV3 F 
+	   inner join OEXD G on G.ExpnsCode =F.ExpnsCode inner join STC1 A0 on A0.STCCode=f.TaxCode inner join OSTC A1 on A1.Code=A0.STCCode and A0.STAType='-110'  Where  F.DocEntry =A.DocEntry 
+	    and isnull(G.U_IsTCS,'N')='N'),0.0) 
+	   +(Quantity *Price* isnull( (Select C.Rate/2 from STC1 A0 Where A0.STCCode=B.TaxCode and A0.STAType='-110' ),0.0)/100) As CGSTAmt
+	   ,isnull((Select f.LineTotal*A1.Rate*0.01/2 from INV3 F 
+	   inner join OEXD G on G.ExpnsCode =F.ExpnsCode inner join STC1 A0 on A0.STCCode=f.TaxCode inner join OSTC A1 on A1.Code=A0.STCCode and A0.STAType='-100'  Where  F.DocEntry =A.DocEntry 
+	    and isnull(G.U_IsTCS,'N')='N'),0.0) 
+	   +(Quantity *Price* isnull( (Select C.Rate/2 from STC1 A0 Where A0.STCCode=B.TaxCode and A0.STAType='-100' ),0.0)/100) As SGSTAmt
+	   ,isnull((Select f.LineTotal*A1.Rate*0.01  from INV3 F 
+	   inner join OEXD G on G.ExpnsCode =F.ExpnsCode inner join STC1 A0 on A0.STCCode=f.TaxCode inner join OSTC A1 on A1.Code=A0.STCCode and A0.STAType='-120'  Where  F.DocEntry =A.DocEntry 
+	    and isnull(G.U_IsTCS,'N')='N'),0.0) 
+	   +Quantity *Price* isnull( (Select C.Rate  from STC1 A0 Where A0.STCCode=B.TaxCode and A0.STAType='-120' ),0.0)/100 As IGSTAmt
+
+
+       from dbo.INV1 as B inner join OINV A on A.DocEntry =B.DocEntry 
+	   inner join OSTC C on C.Code =B.TaxCode
+	   inner join NNM1 D on D.Series =A.Series
+	   inner jOIn OCRD E on E.CardCode =A.CardCode
+       where B.DocEntry  = H.DocEntry
+       for xml path('Item'), type
+       )  
+from dbo.OINV as H Where H.DocEntry= @list_of_cols_val_tab_del   for  xml  path('SalesInvoice') , type);  
+ 
+-- Cast the XML variable into a VARCHAR
+DECLARE @xmlChar AS nvarchar(max)= CAST(@xml AS nVARCHAR(MAX))
+
+-- Escape the < and > characters
+ SET @xmlChar = REPLACE(REPLACE(@xmlChar, '>', '^>'), '<', '^<')
+  
+-- Create command text to echo to file
+DECLARE @command VARCHAR(8000) = 'echo ' + @xmlChar + ' > E:\AIS_TallyIntegration\SalesInvoices\13_'+ @list_of_cols_val_tab_del +'.xml'
+
+-- Execute the command
+ EXEC xp_cmdshell @command
+
+ Set @command  = 'powershell -Command "Set-Content -Encoding UTF8 E:\AIS_TallyIntegration\SalesInvoices\13_'+ @list_of_cols_val_tab_del +'.xml \"' + @xmlChar + '\""'
+END
+
+END
+
+----[@AIS_BillDelivery_XMLGeneration]'65'
+
+--sp_configure 'show advanced options', '1'
+--RECONFIGURE
+-- this enables xp_cmdshell
+--sp_configure 'xp_cmdshell', '1' 
+--RECONFIGURE

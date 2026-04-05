@@ -1,0 +1,26 @@
+﻿CREATE PROCEDURE "@AIS_BillDelivery_TCSDetails" (IN CardCode varchar(5000), IN TaxCode varchar(5000)) AS AccTransacion decimal(18, 5) := 0;
+TaxAmt decimal(18, 5) := 0;
+ExpTaxCode varchar(5000) := '';
+FromDate varchar(5000) := '';
+ToDate varchar(5000) := '';
+temp_var_0 integer;
+temp_var_1 integer;
+temp_var_2 integer;
+BEGIN SELECT CAST(MIN("F_RefDate") AS varchar(10)), CAST(MAX("T_RefDate") AS varchar(10)) INTO FromDate, ToDate FROM OFPR;
+--[Note:Modifier] SAP HANA does not support function CONVERT; use the CAST function or implicit casting functions
+--Where Year(GetDate()) between F_RefDate and T_RefDate
+SELECT SUM(T0."Debit") INTO AccTransacion FROM JDT1 T0;
+SELECT "U_TCSPercent" INTO TaxAmt FROM OCRD T0 INNER JOIN "@AIS_TCS" T1 ON T1."Code" = T0."CmpPrivate";
+SELECT (SELECT "Code" FROM OSTC T1 WHERE "Rate" = 0 AND "Code" = :TaxCode) INTO temp_var_0 FROM DUMMY;
+IF :temp_var_0 > 0 THEN ExpTaxCode := :TaxCode;
+ELSE SELECT (SELECT 'a' FROM OSTC WHERE :TaxCode LIKE '%SGST%') INTO temp_var_1 FROM DUMMY;
+IF :temp_var_1 > 0 THEN SELECT "Code" INTO ExpTaxCode FROM OSTC T1;
+END IF;
+SELECT (SELECT 'a' FROM OSTC WHERE :TaxCode LIKE '%IGST%') INTO temp_var_2 FROM DUMMY;
+IF :temp_var_2 > 0 THEN SELECT "Code" INTO ExpTaxCode FROM OSTC T1;
+END IF;
+--Select @AccTransacion as TransValue ,@TaxAmt As TCSAmt ,@ExpTaxCode as TaxCode
+END IF;
+SELECT 5000100 AS "TransValue", :TaxAmt AS "TCSAmt", :ExpTaxCode AS "TaxCode" FROM DUMMY;
+--[Note:Modifier] Use FROM DUMMY if there is no FROM clause in the SELECT statement
+END;

@@ -1,0 +1,30 @@
+﻿DO BEGIN
+
+DECLARE Types NVARCHAR(100) = '[%1]';
+DECLARE DocEntry NVARCHAR(100) = '[%2]';
+
+IF :Types = 'Header' THEN
+
+Select * from "OPCH" where "DocEntry" = :DocEntry and "CANCELED" = 'N';
+
+ELSEIF :Types = 'Line' THEN
+
+Select * from "PCH1" where "DocEntry" = :DocEntry;
+
+ELSEIF :Types = 'Expense' THEN
+
+Select Distinct "U_AVA_Ledger",SUM("U_AVA_Debit") - SUM("U_AVA_Credit") AS "Amount",(Select "ExpnsCode" from "OEXD" where "ExpnsName" = "U_AVA_Ledger") AS "ExpenseCode",(Select TOP 1 "TaxCode" from "PCH1" where "DocEntry" = :DocEntry) AS "TaxCode"
+from "@AVA_DED2"
+where "U_AVA_DocEntry" = :DocEntry group by "U_AVA_Ledger";
+
+ELSEIF :Types = 'GroupCode' THEN
+
+Select "GroupCode" from "OCRG" where "GroupName" = 'Transporter';
+
+ELSEIF :Types = 'Quantity' THEN
+
+Select * from "@AVA_DED2" where "U_AVA_DocEntry" = :DocEntry AND ("U_AVA_Debit" > 0 OR "U_AVA_Credit" > 0);
+
+END IF;
+
+END

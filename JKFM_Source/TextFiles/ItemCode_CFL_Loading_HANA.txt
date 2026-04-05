@@ -1,0 +1,2 @@
+﻿Select T0."ItemCode"  From "OITM" T0 Inner Join "@AIS_CIA1" T1 on T1."U_ItemCode" =T0."ItemCode" Inner Join "@AIS_OCIA" T2 
+on T2."Code"  =T1."Code"  Where T2."U_CardCode" ='[%1]'

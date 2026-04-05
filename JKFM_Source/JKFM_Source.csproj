@@ -1,0 +1,411 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C94D1E66-8F14-4EBD-913D-D6E95DDD7819}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>JKFM_Source</RootNamespace>
+    <AssemblyName>JKFM_Source</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>JKFM_Source.SubMain</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>..\packages\BouncyCastle.Cryptography.2.3.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\JKFM_Addon 1.3 LWA\X64Client\CrystalDecisions.CrystalReports.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\JKFM_Addon 1.3 LWA\X64Client\CrystalDecisions.ReportSource.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\JKFM_Addon 1.3 LWA\X64Client\CrystalDecisions.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="Enums.NET, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7ea1c1650d506225, processorArchitecture=MSIL">
+      <HintPath>..\packages\Enums.NET.4.0.1\lib\net45\Enums.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="ExtendedNumerics.BigDecimal, Version=2025.1001.2.129, Culture=neutral, PublicKeyToken=65f1315a45ad8949, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExtendedNumerics.BigDecimal.2025.1001.2.129\lib\net48\ExtendedNumerics.BigDecimal.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.4.2\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.3, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13.3\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Viveks\ViveksAddonSource_20210608\ViveksAddonSource\bin\Debug\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cd8b63ad3d691a37, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.Signed.5.0.0\lib\net48\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.3.0.0\lib\netstandard2.0\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\..\Viveks\ViveksAddonSource_20210608\ViveksAddonSource\bin\Debug\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.Core, Version=2.7.3.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.7.3\lib\net472\NPOI.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.7.3.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.7.3\lib\net472\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.7.3.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.7.3\lib\net472\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.7.3.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.7.3\lib\net472\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenXml.Excel.Data">
+      <HintPath>..\..\Viveks\ViveksAddonSource_20210608\ViveksAddonSource\bin\Debug\OpenXml.Excel.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Sap.Data.Hana.v4.5, Version=1.0.120.0, Culture=neutral, PublicKeyToken=0326b8ea63db4bc4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\GeeGeeKay\Sales_Enquiry_Addon_Test 0.0.4\Sales_Enquiry_Addon_Test 0.0.4_Source_12.12.2020\GGKAddon\bin\Debug\Sap.Data.Hana.v4.5.dll</HintPath>
+    </Reference>
+    <Reference Include="SixLabors.Fonts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d998eea7b14cab13, processorArchitecture=MSIL">
+      <HintPath>..\packages\SixLabors.Fonts.1.0.1\lib\netstandard2.0\SixLabors.Fonts.dll</HintPath>
+    </Reference>
+    <Reference Include="SixLabors.ImageSharp, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d998eea7b14cab13, processorArchitecture=MSIL">
+      <HintPath>..\packages\SixLabors.ImageSharp.2.1.10\lib\net472\SixLabors.ImageSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.ConfigurationManager, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Configuration.ConfigurationManager.5.0.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.OracleClient" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.AccessControl, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.AccessControl.5.0.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Pkcs, Version=8.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Pkcs.8.0.1\lib\net462\System.Security.Cryptography.Pkcs.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Xml, Version=8.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Xml.8.0.2\lib\net462\System.Security.Cryptography.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Permissions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Permissions.5.0.0\lib\net461\System.Security.Permissions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Text.Encoding.CodePages, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.5.0.0\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="ThoughtWorks.QRCode">
+      <HintPath>..\JKFM_Addon 1.3 LWA\X64Client\ThoughtWorks.QRCode.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class\CustomerStatement\Cls_CustomerStatement.cs" />
+    <Compile Include="Class\CustomerWiseItemAllocation\Cls_CustomerWiseItemAllocation.cs" />
+    <Compile Include="Class\EmailSetup\Cls_EmailSetup.cs" />
+    <Compile Include="Class\EmailSetup\UNCAccessWithCredentials.cs" />
+    <Compile Include="Class\GrindingCapacity\Cls_GrindingCapacity.cs" />
+    <Compile Include="Class\Insurance\Cls_InsuranceDetails.cs" />
+    <Compile Include="Class\Inventory\Pick and Pack\Pick Pack and Production Manager\Cls_PickListData.cs" />
+    <Compile Include="Class\Inventory\Pick and Pack\Pick Pack and Production Manager\Cls_PickListManager.cs" />
+    <Compile Include="Class\Inventory\Pick and Pack\Pick Pack and Production Manager\Cls_PickListWizardData.cs" />
+    <Compile Include="Class\ItemCreation\Cls_ItemCreation.cs" />
+    <Compile Include="Class\Masters\Branch Master\Cls_UnitMaster.cs" />
+    <Compile Include="Class\Masters\ShiftMaster\Cls_ShiftMaster.cs" />
+    <Compile Include="Class\Masters\YieldMaster\Cls_YieldMaster.cs" />
+    <Compile Include="Class\PackingCapacity\Cls_PackingCapacity.cs" />
+    <Compile Include="Class\PickList\Cls_PickList.cs" />
+    <Compile Include="Class\Purchase\Cls_APInvoice.cs" />
+    <Compile Include="Class\Purchase\Cls_GRPO.cs" />
+    <Compile Include="Class\Purchase\Cls_ListofGRPO.cs" />
+    <Compile Include="Class\Purchase\Cls_PurchaseDetails.cs" />
+    <Compile Include="Class\Sales\Cls_BillDelivery.cs" />
+    <Compile Include="Class\Sales\Cls_PreSaleApproval.cs" />
+    <Compile Include="Class\Sales\Cls_PreSalesOrder.cs" />
+    <Compile Include="Class\Sales\Cls_SalesOrderCreation.cs" />
+    <Compile Include="Class\Sales\Cls_SalesPlan.cs" />
+    <Compile Include="FrameWork\ClsMain.cs" />
+    <Compile Include="FrameWork\ClsSBO.cs" />
+    <Compile Include="FrameWork\Cls_DatabaseUpdate.cs" />
+    <Compile Include="FrameWork\Cls_EncryptHelper.cs" />
+    <Compile Include="FrameWork\Cls_QueryManagerUpdate.cs" />
+    <Compile Include="FrameWork\License\Cls_BASE36.cs" />
+    <Compile Include="FrameWork\License\Cls_LicenseEntity.cs" />
+    <Compile Include="FrameWork\License\Cls_LicenseHandler.cs" />
+    <Compile Include="FrameWork\License\Cls_LicenseStatus.cs" />
+    <Compile Include="FrameWork\License\Cls_LicenseTypes.cs" />
+    <Compile Include="FrameWork\License\Cls_LicenseUpload.cs" />
+    <Compile Include="FrameWork\License\Cls_LicenseVerify.cs" />
+    <Compile Include="FrameWork\License\Cls_MyLicense.cs" />
+    <Compile Include="FrameWork\WindowWrapper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubMain\SubMain.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="ExcelTemplates\SampleTemplate_ItemCreation.xlsx" />
+    <EmbeddedResource Include="ExcelTemplates\SampleTemplate_MinMaxUpload.xlsx" />
+    <EmbeddedResource Include="ExcelTemplates\SampleTemplate_PreferredVendor.xlsx" />
+    <EmbeddedResource Include="ExcelTemplates\SampleTemplate_PriceUpload.xlsx" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TextFiles\Avaniko_Icon.jpg" />
+    <EmbeddedResource Include="TextFiles\LicenseTable_HANA.txt" />
+    <EmbeddedResource Include="TextFiles\LicenseTable_SQL.txt" />
+    <EmbeddedResource Include="XML\addMenus.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="XML\DatabaseUpdate.xml" />
+    <EmbeddedResource Include="XML\LicenseUpload.xml" />
+    <EmbeddedResource Include="XML\QueryManagerUpdate.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\PreSalesOrder.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_SalePlanning_LoadPreSalesOrderQtyDetailsForPopupWindow].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_SalePlanning_LoadPreSalesOrderQtyDetails].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_SalePlanning_LoadPreSalesOrder].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[GetPreSalesOrderDetails].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[GetPreSalesOrderItemQty].sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_SalesPlanning_GetTaxCodeDetermination].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_SalesPlanning_GetUnitPrice].sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\PurchaseDetails.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TextFiles\ItemCode_CFL_Loading_SQL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\CustomerWiseItemAllocation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\Delivery.xml" />
+    <EmbeddedResource Include="XML\SalesOrderCreation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_BillDelivery_GetBatchDetails].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_BillDelivery_GetDocTotal].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_BillDelivery_GetDriverName].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_BillDelivery_GetSerialNumbers].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_BillDelivery_LoadDelivery].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_BillDelivery_LoadPreSalesOrder].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_BillDelivery_LoadWeighBridgeDetails].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_BillDelivery_TCSDetails].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[SplitString].sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\BranchMaster.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_BillDelivery_XMLGeneration].txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="SAPbobsCOM">
+      <Guid>{FC8030BE-F5D2-4B8E-8F92-44228FE30100}</Guid>
+      <VersionMajor>10</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="SAPbouiCOM">
+      <Guid>{6048236A-956D-498D-A6F1-9C81C13AB6E8}</Guid>
+      <VersionMajor>10</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\GrindingCapacity.xml" />
+    <EmbeddedResource Include="XML\PackingCapacity.xml" />
+    <EmbeddedResource Include="XML\PreSaleApproval.xml" />
+    <EmbeddedResource Include="XML\SalesPlanning.xml" />
+    <EmbeddedResource Include="XML\SalesPlanPop.xml" />
+    <EmbeddedResource Include="XML\SalesPlanPop2.xml" />
+    <EmbeddedResource Include="XML\ShiftMaster.xml" />
+    <EmbeddedResource Include="XML\YieldMaster.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40AIS_SalePlanning_ShiftCalculateEndTime].sql" />
+    <EmbeddedResource Include="Addon SQL SP%27s\[%40SMS_timeSub].sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TextFiles\ItemCode_CFL_Loading_HANA.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40AIS_SalesPlanning_GetTaxCodeDetermination].txt" />
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40AIS_SalesPlanning_GetUnitPrice].txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\CustomerStatement.xml" />
+    <EmbeddedResource Include="XML\EmailSetup.xml" />
+    <EmbeddedResource Include="XML\InsuranceDetails.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TextFiles\APCreditMemo.txt" />
+    <EmbeddedResource Include="TextFiles\APInvoice.txt" />
+    <EmbeddedResource Include="TextFiles\AR_CreditMemo_HANA.txt" />
+    <EmbeddedResource Include="TextFiles\AR_Invoice_HANA.txt" />
+    <EmbeddedResource Include="TextFiles\CSGrouping_HANA.txt" />
+    <EmbeddedResource Include="TextFiles\CustomerStatement_HANA.txt" />
+    <EmbeddedResource Include="TextFiles\Deduction_Details.txt" />
+    <EmbeddedResource Include="TextFiles\GRPO_HANA.txt" />
+    <EmbeddedResource Include="TextFiles\Insurance_Update.txt" />
+    <EmbeddedResource Include="TextFiles\Lab_Deduction.txt" />
+    <EmbeddedResource Include="TextFiles\OutgoingPayment_HANA.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40AIS_BillDelivery_GetDocTotal].txt" />
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40AIS_BillDelivery_GetSerialNumbers].txt" />
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40AIS_BillDelivery_LoadPreSalesOrder].txt" />
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40AIS_BillDelivery_LoadWeighBridgeDetails].txt" />
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40AIS_BillDelivery_TCSDetails].txt" />
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40SMS_timeSub].txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TextFiles\PreSalesOrder_Update_Fields_HANA.txt" />
+    <EmbeddedResource Include="TextFiles\PreSalesOrder_Update_Fields_SQL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40AIS_BillDelivery_LoadDelivery].txt" />
+    <EmbeddedResource Include="Addon HANA SP%27s\[AIS_BillDelivery_GetBatchDetails].txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon HANA SP%27s\[%40AIS_BillDelivery_XMLGeneration].txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\ItemCreation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\Result.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TextFiles\MinMaxUpload.txt" />
+    <EmbeddedResource Include="TextFiles\UploadedResults.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Addon HANA SP%27s\%40AIS_BillDelivery_GetDocTotal_CreditCheck .txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TextFiles\PickListQRCode.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,54 @@
+﻿CREATE PROCEDURE "AIS_BillDelivery_GetBatchDetails" ( ItemCode Varchar(5000),BatchQty Decimal(18,4),WhsCode Varchar(5000))  
+LANGUAGE SQLSCRIPT 
+SQL SECURITY INVOKER
+
+AS
+ CURSOR brand_cursor for SELECT T1."BatchNum" as  BatchNum 
+,T1."Quantity" -Sum(IFNULL(T2."BATCHQTY",0)) Quantity
+FROM "OIBT" T1 left join "BATCHTEMPTAB"  T2 on T2."ITEMCODE"=T1."ItemCode" 
+
+and  T2."WHSCODE"=T1."WhsCode" 
+
+ and  T2."BATCHNUM"=T1."BatchNum" 
+
+ WHERE T1."ItemCode" =  :ItemCode and T1."Quantity" >0 and T1."WhsCode" = :WhsCode
+ group by  T1."BatchNum" ,T1."Quantity",T1."WhsCode"
+ having T1."Quantity" -Sum(IFNULL(T2."BATCHQTY",0))  >0
+ORDER BY T1."WhsCode" ASC;
+
+Begin
+
+DECLARE site_value DECIMAL(18,4);  
+Declare BatchNum varchar(5000);
+Declare Quantity Decimal(18,4); 
+
+Create local TEMPORARY Table  #TableTemp ("BATCHNUM" Varchar(5000),"BATCHQTY" Decimal(18,4));
+    
+
+site_value = :BatchQty;
+
+
+
+FOR cur_row as brand_cursor DO
+   
+If (:site_value <= cur_row.Quantity) then 
+
+INSERT Into #TableTemp Values ( cur_row.BatchNum ,:site_value  );
+ site_value := 0;
+ElseIf (:site_value > cur_row.Quantity) then
+
+INSERT into #TableTemp("BATCHNUM","BATCHQTY") Values ( cur_row.BatchNum ,cur_row.Quantity  );
+site_value := :site_value -cur_row.Quantity;
+END IF;
+
+
+END FOR;
+--CLOSE brand_cursor;    
+--DEALLOCATE brand_cursor;    
+INSERT into BatchTempTab (itemcode,whscode,batchnum,batchqty)
+SELECT :ItemCode,:WhsCode, "BATCHNUM","BATCHQTY" From #TableTemp Where "BATCHQTY">0.0;
+SELECT "BATCHNUM","BATCHQTY" From #TableTemp Where "BATCHQTY">0.0;
+
+--Drop table #TableTemp;
+
+End;

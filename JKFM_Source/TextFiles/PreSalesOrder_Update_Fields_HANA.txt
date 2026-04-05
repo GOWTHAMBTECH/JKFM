@@ -1,0 +1,81 @@
+﻿DO
+BEGIN
+
+UPDATE T0 SET T0."U_CardName"=T4."CardName"
+--, T0."U_TotalTon"=T1."Required_Quantity"
+
+from "@AIS_OPRE" T0 
+INNER JOIN "@AIS_PRE1" 
+--(       SELECT "DocEntry","LineId","U_ItemCode",SUM("U_ReqQty") "Required_Quantity"
+--        FROM "@AIS_PRE1"   
+--        GROUP BY "DocEntry","LineId","U_ItemCode"
+
+--) 
+T1
+ ON T1."DocEntry" = T0."DocEntry"
+INNER JOIN 
+(
+        SELECT "DocEntry","U_UniqID","U_CompStatus",SUM("U_Qty") "Quantity"
+        FROM "@AIS_PRE2" 
+        GROUP BY "DocEntry","U_UniqID","U_CompStatus"
+) T2
+ON T2."DocEntry" = T1."DocEntry" AND T2."U_UniqID" = T1."LineId" INNER JOIN OITM T3 
+ON T3."ItemCode" = T1."U_ItemCode" INNER JOIN OCRD T4 ON T4."CardCode" = T0."U_CardCode"
+Where T0."U_CardCode"='[%1]'
+AND T1."U_ItemCode" = '[%2]' 
+AND T1."DocEntry" = '[%3]' 
+AND T1."LineId" = '[%4]' 
+AND T2."U_CompStatus" != 'C';
+
+UPDATE T1 SET T1."U_ItemName"=T3."ItemName",T1."U_ReqDate"=T2."Quantity",
+T1."U_ReqQty"=((T2."Quantity"*(Select "SalPackUn" from "OITM" Where "ItemCode" = '[%2]'))/ 1000.0),
+T1."U_UomCode"=(Select "SalUnitMsr" from "OITM" Where "ItemCode" = '[%2]'),
+T1."U_TaxCode"=(SELECT T0."TaxCode" FROM TCD3 T0 INNER JOIN TCD2 T1 ON T0."Tcd2Id" = T1."AbsId" 
+INNER JOIN TCD2 T2 ON T2."AbsId" = T0."AbsId" WHERE T1."KeyFld_1_V" = 
+(SELECT "U_TCategory" FROM OITM WHERE "ItemCode" = '[%2]' ) AND T1."KeyFld_2_V" = 
+(SELECT "State1" FROM OCRD WHERE "CardCode" = '[%1]')),
+T1."U_UnitPrice"=(SELECT T2."Price" FROM OUOM T0 INNER JOIN OITM T1 ON T1."PriceUnit" = T0."UomEntry" 
+INNER JOIN ITM1 T2 ON T2."ItemCode" = T1."ItemCode" INNER JOIN OCRD T3 ON T3."ListNum" = T2."PriceList"
+WHERE T1."ItemCode" = '[%2]' AND T3."CardCode" = '[%1]' AND T0."UomCode" = (Select "SalUnitMsr" from "OITM" Where "ItemCode" = '[%2]') 
+UNION ALL SELECT T1."Price" FROM OUOM T0 INNER JOIN ITM9 T1 ON T1."UomEntry" = T0."UomEntry" 
+INNER JOIN OITM T4 ON T4."ItemCode" = T1."ItemCode" INNER JOIN ITM1 T2 ON T2."ItemCode" = T1."ItemCode"
+AND T2."PriceList" = T1."PriceList" INNER JOIN OCRD T3 ON T3."ListNum" = T2."PriceList" WHERE 
+T1."ItemCode" = '[%2]' AND T3."CardCode" = '[%1]' AND T0."UomCode" = (Select "SalUnitMsr" from "OITM" Where "ItemCode" = '[%2]'))
+
+
+from "@AIS_OPRE" T0 INNER JOIN "@AIS_PRE1" T1 ON T1."DocEntry" = T0."DocEntry" 
+INNER JOIN 
+(
+        SELECT "DocEntry","U_UniqID","U_CompStatus",SUM("U_Qty") "Quantity"
+        FROM "@AIS_PRE2" 
+        GROUP BY "DocEntry","U_UniqID","U_CompStatus"
+) T2
+ON T2."DocEntry" = T1."DocEntry" AND T2."U_UniqID" = T1."LineId" INNER JOIN OITM T3 
+ON T3."ItemCode" = T1."U_ItemCode" INNER JOIN OCRD T4 ON T4."CardCode" = T0."U_CardCode"
+Where T0."U_CardCode"='[%1]'
+AND T1."U_ItemCode" = '[%2]' 
+AND T1."DocEntry" = '[%3]' 
+AND T1."LineId" = '[%4]' 
+AND T2."U_CompStatus" != 'C';
+
+UPDATE T2 SET T2."U_WhsName"=T5."WhsName"
+--,T1."U_ReqDate"=T2."Quantity"
+
+from "@AIS_OPRE" T0 INNER JOIN "@AIS_PRE1" T1 ON T1."DocEntry" = T0."DocEntry" 
+INNER JOIN "@AIS_PRE2"
+--(
+--        SELECT "DocEntry","U_UniqID","U_CompStatus",SUM("U_Qty") "Quantity"
+--       FROM "@AIS_PRE2" 
+--       GROUP BY "DocEntry","U_UniqID","U_CompStatus"
+--) 
+T2
+ON T2."DocEntry" = T1."DocEntry" AND T2."U_UniqID" = T1."LineId" INNER JOIN OITM T3 
+ON T3."ItemCode" = T1."U_ItemCode" INNER JOIN OCRD T4 ON T4."CardCode" = T0."U_CardCode"
+INNER JOIN OWHS T5 ON T5."WhsCode" = T2."U_WhsCode"
+Where T0."U_CardCode"='[%1]'
+AND T1."U_ItemCode" = '[%2]' 
+AND T1."DocEntry" = '[%3]' 
+AND T1."LineId" = '[%4]' ;
+--AND T2."U_CompStatus" != 'C';
+
+END;

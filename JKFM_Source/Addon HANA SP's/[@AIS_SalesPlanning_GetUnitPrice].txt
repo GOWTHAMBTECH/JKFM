@@ -1,0 +1,4 @@
+﻿CREATE PROCEDURE "@AIS_SalesPlanning_GetUnitPrice" (IN ItemCode varchar(5000), IN CardCode varchar(5000), IN SalesUom varchar(5000)) AS BEGIN SELECT T2."Price" FROM OUOM T0 INNER JOIN OITM T1 ON T1."PriceUnit" = T0."UomEntry" INNER JOIN ITM1 T2 ON T2."ItemCode" = T1."ItemCode" INNER JOIN OCRD T3 ON T3."ListNum" = T2."PriceList" WHERE T1."ItemCode" = :ItemCode AND T3."CardCode" = :CardCode AND T0."UomCode" = :SalesUom UNION ALL SELECT T1."Price" FROM OUOM T0 INNER JOIN ITM9 T1 ON T1."UomEntry" = T0."UomEntry" INNER JOIN OITM T4 ON T4."ItemCode" = T1."ItemCode" INNER JOIN ITM1 T2 ON T2."ItemCode" = T1."ItemCode" AND T2."PriceList" = T1."PriceList" INNER JOIN OCRD T3 ON T3."ListNum" = T2."PriceList" WHERE T1."ItemCode" = :ItemCode AND T3."CardCode" = :CardCode AND T0."UomCode" = :SalesUom;
+--and T0.UomCode =T1.SalUnitMsr 
+--and T0.UomCode =T4.SalUnitMsr 
+END;

@@ -1,0 +1,4 @@
+﻿CREATE PROCEDURE "@AIS_SalesPlanning_GetTaxCodeDetermination" (IN ItemCode varchar(100), IN CardCode varchar(100)) AS BEGIN SELECT T0."TaxCode" FROM TCD3 T0 INNER JOIN TCD2 T1 ON T0."Tcd2Id" = T1."AbsId" INNER JOIN TCD2 T2 ON T2."AbsId" = T0."AbsId" WHERE T1."KeyFld_1_V" = (SELECT "U_TCategory" FROM OITM WHERE "ItemCode" = :ItemCode) AND T1."KeyFld_2_V" = (SELECT "State1" FROM OCRD WHERE "CardCode" = :CardCode);
+-- Select State1,State2 ,* from OCRD
+--Select  T2.KeyFld_1_V, KeyFld_2_V,*    From TCD2 T2
+END;

@@ -1,0 +1,20 @@
+﻿CREATE PROCEDURE "@SMS_timeSub" (IN InTime decimal(10, 2), IN OutTime decimal(10, 2)) AS InTime_Dec decimal(10, 2);
+OutTime_Dec decimal(10, 2);
+InTime_Frac decimal(10, 2);
+OutTime_Frac decimal(10, 2);
+TotalTime decimal(10, 2);
+TotalTime_DicPart decimal(10, 2);
+TotalTime_FraPart decimal(10, 2);
+BEGIN InTime_Dec := CAST(:InTime AS integer);
+--[Note:Modifier] SAP HANA does not support function CONVERT; use the CAST function or implicit casting functions
+OutTime_Dec := CAST(:OutTime AS integer);
+--[Note:Modifier] SAP HANA does not support function CONVERT; use the CAST function or implicit casting functions
+InTime_Frac := :InTime - :InTime_Dec;
+OutTime_Frac := :OutTime - :OutTime_Dec;
+TotalTime_DicPart := :OutTime_Dec - :InTime_Dec;
+TotalTime_FraPart := :OutTime_Frac - :InTime_Frac;
+TotalTime := :TotalTime_DicPart + CASE WHEN :TotalTime_FraPart < 0 THEN 0.60 - (:TotalTime_FraPart * -1) ELSE :TotalTime_FraPart END;
+TotalTime := :TotalTime - CASE WHEN :TotalTime_FraPart < 0 THEN 1 ELSE 0 END;
+RETURN;
+--[Note:Stringifier] SAP HANA does not support returning values using the RETURN statement
+END;

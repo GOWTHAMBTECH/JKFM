@@ -1,0 +1,37 @@
+﻿DO
+BEGIN
+
+UPDATE T0 SET T0.U_CardName=T4.CardName
+
+from [@AIS_OPRE] T0 INNER JOIN [@AIS_PRE1] T1 ON T1.DocEntry = T0.DocEntry
+INNER JOIN 
+(
+        SELECT DocEntry,U_UniqID,U_CompStatus,SUM(U_Qty) AS Required_Quantity
+        FROM [@AIS_PRE2] 
+        GROUP BY DocEntry,U_UniqID,U_CompStatus
+) T2
+ON T2.DocEntry = T1.DocEntry AND T2.U_UniqID = T1.LineId INNER JOIN OITM T3 
+ON T3.ItemCode = T1.U_ItemCode INNER JOIN OCRD T4 ON T4.CardCode = T0.U_CardCode
+Where T0.U_CardCode='[%1]'
+AND T1.U_ItemCode = '[%2]' 
+AND T1.DocEntry = '[%3]' 
+AND T1.LineId = '[%4]' 
+AND T2.U_CompStatus != 'C';
+
+UPDATE T1 SET T1.U_ItemName=T3.ItemName,T1.U_ReqDate=T2.Required_Quantity
+
+from [@AIS_OPRE] T0 INNER JOIN [@AIS_PRE1] T1 ON T1.DocEntry = T0.DocEntry
+INNER JOIN 
+(
+        SELECT DocEntry,U_UniqID,U_CompStatus,SUM(U_Qty) AS Required_Quantity
+        FROM [@AIS_PRE2] 
+        GROUP BY DocEntry,U_UniqID,U_CompStatus
+) T2
+ON T2.DocEntry = T1.DocEntry AND T2.U_UniqID = T1.LineId INNER JOIN OITM T3 
+ON T3.ItemCode = T1.U_ItemCode INNER JOIN OCRD T4 ON T4.CardCode = T0.U_CardCode
+Where T0.U_CardCode='[%1]'
+AND T1.U_ItemCode = '[%2]' 
+AND T1.DocEntry = '[%3]' 
+AND T1.LineId = '[%4]' 
+AND T2.U_CompStatus != 'C';
+END;

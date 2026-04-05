@@ -1,0 +1,23 @@
+﻿DO BEGIN
+
+CREATE LOCAL TEMPORARY TABLE "#Temp" (
+DocEnt CLOB,
+CardCode VARCHAR(100),
+EmailID VARCHAR(254),
+CCMailID VARCHAR(254),
+ContactPerson VARCHAR(100)
+);  
+
+
+
+Select Distinct (Select string_agg(Cast("U_AV_DocEnt" as NVARCHAR(11)),',') from "@AV_GRPTMP" where 
+"Name"='[%1]' and "U_AV_CrdCd"=A."U_AV_CrdCd" and "U_AV_CntPn"=A."U_AV_CntPn" 
+) AS "DocEnt",                                        
+IFNULL("U_AV_CrdCd",'') AS "CardCode",IFNULL("U_AV_EmlId",'') AS "EmailID",IFNULL("U_AV_CCmlId",'') AS "CCMailID",IFNULL("U_AV_CntPn",'') AS "ContactPerson" from "@AV_GRPTMP" A  
+Where "Name"='[%1]' into "#Temp";
+
+Select * from "#Temp";
+
+DROP TABLE "#Temp";
+
+END

@@ -1,0 +1,43 @@
+﻿CREATE PROCEDURE "@AIS_BillDelivery_GetDocTotal" (IN DocEntry varchar(5000), IN DocDueDate varchar(5000)) 
+AS
+PreSalesEntry varchar(5000):= '';
+Unit varchar(5000):= '';
+ 
+BEGIN
+
+-- Commented -- 13.04.2021 --
+
+--SELECT SUM((T1."Quantity" * T2."Price") + ((T1."Quantity" * T2."Price") * IFNULL(T4."Rate", 0.0) / 100)) 
+--FROM ORDR T0 INNER JOIN RDR1 T1 ON T1."DocEntry" = T0."DocEntry" INNER JOIN ITM1 T2 ON T2."ItemCode" = 
+--T1."ItemCode" INNER JOIN OCRD T3 ON T3."CardCode" = T0."CardCode" AND T3."ListNum" = t2."PriceList" 
+--LEFT OUTER JOIN OSTC T4 ON T4."Code" = T1."TaxCode" WHERE T0."DocNum" = :DocEntry
+--AND T0."DocDueDate" = :DocDueDate;
+
+-- Commented -- 13.04.2021 --
+
+SELECT SUM((T1."Quantity" * T5."SalPackUn" ) * T2."Price" )+(((T1."Quantity" * T5."SalPackUn" ) * T2."Price" )
+* IFNULL(T4."Rate", 0.0) / 100)
+FROM ORDR T0 INNER JOIN RDR1 T1 ON T1."DocEntry" = T0."DocEntry" INNER JOIN ITM1 T2 ON T2."ItemCode" = 
+T1."ItemCode" INNER JOIN OITM T5 ON T5."ItemCode"=T1."ItemCode" INNER JOIN OCRD T3 ON T3."CardCode" = T0."CardCode" AND T3."ListNum" = t2."PriceList" 
+LEFT OUTER JOIN OSTC T4 ON T4."Code" = T1."TaxCode" WHERE T0."DocNum" = :DocEntry
+AND T0."DocDueDate" = :DocDueDate GROUP BY T1."Quantity",T5."SalPackUn",T2."Price",T4."Rate";
+
+-- Commented -- 12.04.2021 --
+
+--SELECT "U_PreSalEnt", T0."U_UNIT" INTO PreSalesEntry, Unit FROM ORDR T0 
+--Where T0."DocNum"=:DocEntry and T0."DocDueDate" =:DocDueDate;
+--SELECT SUM((T1."Quantity" * T6."Price") + ((T1."Quantity" * T6."Price") * IFNULL(T4."Rate", 0.0) / 100)) FROM ORDR T0 INNER JOIN RDR1 T1 ON T1."DocEntry" = T0."DocEntry" INNER JOIN ITM1 T2 ON T2."ItemCode" = T1."ItemCode" INNER JOIN OCRD T3 ON T3."CardCode" = T0."CardCode" AND T3."ListNum" = t2."PriceList" INNER JOIN ITM9 T6 ON T6."ItemCode" = T1."ItemCode" AND t6."PriceList" = t3."ListNum" INNER JOIN OITM T7 ON T7."ItemCode" = T1."ItemCode" INNER JOIN OUOM T5 ON T5."UomEntry" = T6."UomEntry" AND T5."UomCode" = T7."SalUnitMsr" LEFT OUTER JOIN OSTC T4 ON T4."Code" = T1."TaxCode" WHERE T0."U_PreSalEnt" = :PreSalesEntry AND T0."U_UNIT" = :Unit;
+
+-- Commented -- 12.04.2021 --
+
+--Where T0.DocNum=@DocEntry and T0.DocDueDate =@DocDueDate
+--Exec dbo.[@AIS_BillDelivery_GetDocTotal]'202110174','20200918' 
+--[@AIS_BillDelivery_GetDocTotal]'202110178',''
+--Select SUM((T1.Quantity *T6.Price)+ ((T1.Quantity *T6.Price)*isnull(T4.Rate,0.0)/100)) from ORDR T0 inner join RDR1 T1 on T1.DocEntry =T0.DocEntry
+--inner join ITM1 T2 on T2.ItemCode =T1.ItemCode
+--inner join OCRD T3 on T3.CardCode =T0.CardCode and T3.ListNum =t2.PriceList 
+-- inner join ITM9 T6 on T6.ItemCode =T1.ItemCode AND t6.PriceList =t3.ListNum 
+-- inner join OITM T7 on T7.ItemCode =T1.ItemCode
+-- inner join OUOM T5 on T5.UomEntry =T6.UomEntry and T5.UomCode =T7.SalUnitMsr 
+--left join OSTC T4 on T4.Code =T1.TaxCode  Where T0.DocNum=202110178
+END;

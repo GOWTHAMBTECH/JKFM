@@ -1,0 +1,2 @@
+﻿CREATE PROCEDURE "@AIS_BillDelivery_GetSerialNumbers" (IN ItemCode varchar(5000), IN WhsCode varchar(5000)) AS BEGIN SELECT t1."ItemCode", "IntrSerial", "InDate", "Quantity", DAYS_BETWEEN("InDate", NOW()) AS "Days" FROM "OSRI" t0 INNER JOIN SRI1 T1 ON T0."SysSerial" = T1."SysSerial" AND T0."ItemCode" = T1."ItemCode" WHERE "Status" = '0' AND T0."ItemCode" = :ItemCode AND T0."WhsCode" = :WhsCode;
+END;

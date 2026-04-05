@@ -1,0 +1,65 @@
+﻿CREATE PROCEDURE "@AIS_BillDelivery_XMLGeneration" (in DocEntry Nvarchar(100))
+--(@list_of_cols_val_tab_del vARCHAR(MAX))
+AS
+       --@list_of_cols_val_tab_del)
+	   BEGIN
+	  DECLARE xml string;
+	  SELECT  H."DocEntry"  AS "InvEntry",
+       cast((SELECT 
+      H."CardCode" AS "CustomerCode",
+      E."CardName" AS "CustomerName" ,
+      CAST(H."DocDate" AS DATE) AS "Document Date",
+      CAST(H."DocDueDate" AS DATE) AS "Delivery Date"
+	 ,H."Series" ,
+	 CONCAT(H."DocNum",CONCAT('/',D."SeriesName")) AS "DocumentNumber",
+	 H."DocEntry",
+	 A."Comments" AS "Remarks",
+	 IFNULL((SELECT F."LineTotal" FROM "INV3" F 
+	 JOIN "OEXD" G on G."ExpnsCode" =F."ExpnsCode" 
+	 WHERE F."DocEntry" = A."DocEntry" 
+	 AND IFNULL (G."U_IsTCS",'N')='N'),0.0)  AS "LoadCharge",
+		
+	IFNULL((SELECT F."LineTotal" FROM "INV3" F 
+	JOIN "OEXD" G ON G."ExpnsCode" =F."ExpnsCode" 
+	WHERE F."DocEntry" = A."DocEntry" 
+	AND IFNULL(G."U_IsTCS",'N')='Y'),0.0)  AS "TCS",
+   
+		B."ItemCode" ,
+		B."Dscription" AS "Description" 
+	   ,"Quantity" ,"Price" ,
+	   C."Rate" AS "TaxPer" ,
+	   B."DiscPrcnt" AS "Discount"
+	   
+	,IFNULL((SELECT F."LineTotal" * A1."Rate" * 0.01/2 FROM "INV3" F 
+	 JOIN "OEXD" G ON G."ExpnsCode" = F."ExpnsCode" 
+	 JOIN "STC1" A0 ON A0."STCCode"=F."TaxCode" 
+	 JOIN "OSTC" A1 ON A1."Code"=A0."STCCode" AND A0."STAType" = '-110'  
+	 WHERE  F."DocEntry" = A."DocEntry" 
+	 AND IFNULL (G."U_IsTCS",'N')='N'),0.0) 
+	 +("Quantity" * "Price" * 
+	 IFNULL( (Select C."Rate"/2 FROM "STC1" A0 
+	 WHERE A0."STCCode" = B."TaxCode" AND A0."STAType"= '-110' ),0.0)/100) AS "CGSTAmt"
+	  
+	 ,IFNULL((SELECT F."LineTotal" * A1."Rate" * 0.01/2 FROM "INV3" F
+	  JOIN "OEXD" G ON G."ExpnsCode" = F."ExpnsCode" 
+	  JOIN "STC1" A0 ON A0."STCCode" = F."TaxCode" 
+	  JOIN "OSTC" A1 on A1."Code"=A0."STCCode" AND A0."STAType" = '-100'  
+	  WHERE F."DocEntry" = A."DocEntry" AND IFNULL (G."U_IsTCS",'N')='N'),0.0)
+	  +("Quantity" * "Price" * 
+	  IFNULL((SELECT C."Rate"/2 FROM "STC1" A0 
+	  WHERE A0."STCCode" = B."TaxCode" AND A0."STAType" = '-100' ),0.0)/100) AS "SGSTAmt"
+	    	    
+	   FROM "INV1" B 
+	   JOIN "OINV" A ON A."DocEntry" = B."DocEntry"
+	   JOIN "OSTC" C ON C."Code" = B."TaxCode"
+	   JOIN "NNM1" D ON D."Series" = A."Series"
+	   JOIN "OCRD" E on E."CardCode" = A."CardCode"
+       WHERE B."DocEntry" = H."DocEntry"
+       FOR XML
+      ) as varchar(8000))as xml
+      
+FROM "OINV" AS H 
+WHERE H."DocEntry" = :DocEntry;
+--FOR XML;
+--SELECT H."DocEntry",:XML from "OINV" H where H."DocEntry"='55';
+END;

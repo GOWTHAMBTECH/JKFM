@@ -1,0 +1,1 @@
+﻿Select CAST(ROW_NUMBER() OVER(ORDER BY P."WhsCode") AS integer) - 1 AS "LineNum",P."WhsCode" from (Select DISTINCT B."WhsCode" from OITW A INNER JOIN OWHS B ON A."WhsCode"=B."WhsCode" where B."Inactive"='N'Order By B."WhsCode")P;

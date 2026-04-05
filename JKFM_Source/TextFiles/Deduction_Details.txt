@@ -1,0 +1,29 @@
+﻿DO BEGIN
+
+DECLARE TokenNo NVARCHAR(100) = '[%1]';
+DECLARE Types NVARCHAR(100) = '[%2]';
+DECLARE DocEntry NVARCHAR(100) = '[%3]';
+
+IF :Types = 'Add' THEN
+
+Select ROW_NUMBER() OVER(ORDER BY "Code") AS "NE_#",'Y' AS "CK_Select","U_AVA_DEDTYPES" AS "NE_Deduction",
+CASE 
+WHEN "U_AVA_DEDTYPES" = 'Lab Deduction' THEN (Select IFNULL((Select TOP 1 "U_AVA_LABDEDAMT" from "OPDN" where "U_AVA_PURCHASETOKENNO" = :TokenNo),0) from "DUMMY")
+WHEN "U_AVA_DEDTYPES" = 'Shortage Amount' THEN (Select IFNULL((Select SUM("U_AVA_SHORTAGEAMT") from "OPDN" where "U_AVA_PURCHASETOKENNO" = :TokenNo),0) from "DUMMY")
+ELSE 0
+END AS "E_Debit",
+0.0 AS "E_Credit","U_AVA_DEDNAMES" AS "INV_Ledger"
+from "@AVA_OPDT";
+
+ELSEIF :Types = 'Load' THEN
+
+Select ROW_NUMBER() OVER(ORDER BY "U_AVA_DocEntry") AS "NE_#","U_AVA_DedName" AS "NE_Deduction","U_AVA_Debit" AS "NE_Debit","U_AVA_Credit" AS "NE_Credit","U_AVA_Total" AS "INV_Total"
+from "@AVA_DED2" where "U_AVA_DocEntry" = :DocEntry;
+
+ELSEIF :Types = 'Draft' THEN
+
+Select ROW_NUMBER() OVER(ORDER BY "U_AVA_DocEntry") AS "NE_#","U_AVA_Select" AS "CK_Select","U_AVA_DedName" AS "NE_Deduction","U_AVA_Debit" AS "E_Debit","U_AVA_Credit" AS "E_Credit","U_AVA_Ledger" AS "INV_Ledger"
+from "@AVA_TEMP2" where "U_AVA_DocEntry" = :DocEntry;
+
+END IF;
+END

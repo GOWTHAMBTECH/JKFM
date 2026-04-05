@@ -1,0 +1,68 @@
+﻿CREATE procedure "@AIS_BillDelivery_LoadDelivery" (in AbsEntry Nvarchar(100))
+as 
+Begin 
+
+	USING SQLSCRIPT_STRING AS LIBRARY;
+		DECLARE TEST_OUTPUT TABLE(RESULT NVARCHAR(5000));
+		
+		TEST_OUTPUT = LIBRARY:SPLIT_TO_TABLE(:AbsEntry,',');
+
+Select * from (
+Select  T0."AbsEntry",T3."DocNum",T3."DocEntry",T3."DocDate",T3."CardCode",T3."CardName" ,
+T4."ItemCode" ,T5."ItemName",T3."U_UNIT",T1."PickQtty" AS "PendingQty",
+T4."LineNum",IFNULL((SELECT A1."Price" FROM "OCRD" A0 JOIN "ITM1" A1 on A1."PriceList" =A0."ListNum" 
+WHERE A1."ItemCode" =T4."ItemCode" AND A0."CardCode" =T3."CardCode"),0.0) AS "Price"
+--T4.Price 
+,T4."UomEntry" , T4."TaxCode", T4."WhsCode",IFNULL(T0."U_TruckNo" ,'') AS "TruckNo" ,
+IFNULL(T0."U_Drivname"  ,'') AS "DriverName",
+IFNULL(T0."U_MobileNum",'') AS "MobileNo" ,"U_Vehicle",
+0.0 as "TonInWeight",
+--(T1."PickQtty" * (T5."SalPackUn" + IFNULL(T5."U_BWeight",0)) /1000 ) AS "TonInWeight",
+T5."U_LCHARGES" AS "LoadingCharges" ,
+IFNULL(T3."U_UNIT" ,'') AS "Unit"
+,T4."TreeType" ,T5."SalUnitMsr" 
+FROM "OPKL" T0 
+JOIN "PKL1" T1 ON T0."AbsEntry" =T1."AbsEntry" 
+JOIN "ORDR" T3 on T3."DocEntry" =T1."OrderEntry" AND T3."ObjType" =T1."BaseObject" 
+JOIN "RDR1"  T4 on T4."DocEntry" = T3."DocEntry" AND T4."LineNum" =T1."OrderLine" 
+JOIN "OITM" T5 on T5."ItemCode" =T4."ItemCode"   
+WHERE 
+T0."AbsEntry" IN (SELECT * FROM :TEST_OUTPUT) AND 
+T1."PickQtty">0  AND T1."PickStatus" ='Y' 
+AND T4."TreeType" NOT IN ('S')
+AND T0."AbsEntry" NOT IN (SELECT IFNULL(T0."U_PListNo",'0') FROM "@AIS_PDE1" T0)
+
+UNION ALL 
+
+SELECT DISTINCT T0."AbsEntry", T3."DocNum", T3."DocEntry" ,T3."DocDate" ,T3."CardCode" ,T3."CardName" ,
+T7."ItemCode" ,T5."ItemName",T3."U_UNIT" ,T7."Quantity" AS "PendingQty",
+T7."LineNum",IFNULL((SELECT A1."Price" FROM "OCRD" A0 
+JOIN "ITM1" A1 on A1."PriceList" =A0."ListNum" WHERE A1."ItemCode" =T4."ItemCode" 
+AND A0."CardCode" =T3."CardCode"),0.0) AS "Price"
+--T7.Price 
+,T4."UomEntry" , T7."TaxCode", T7."WhsCode"  ,IFNULL(T0."U_TruckNo" ,'') AS "TruckNo" ,
+IFNULL(T0."U_Drivname",'') AS "DriverName",
+IFNULL(T0."U_MobileNum",'') AS "MobileNo" ,"U_Vehicle",
+0.0 as "TonInWeight",
+--(T7."Quantity" * (T5."SalPackUn" + IFNULL(T5."U_BWeight",0)) /1000 ) AS "TonInWeight",
+T5."U_LCHARGES" AS "LoadingCharges" ,IFNULL(T3."U_UNIT" ,'') AS "Unit"
+,T7."TreeType",T5."SalUnitMsr" -- ,T4.TreeType As TreeType1 ,T6.Father
+FROM "OPKL" T0 
+JOIN "PKL1" T1 ON T0."AbsEntry" =T1."AbsEntry" 
+JOIN "ORDR" T3 ON T3."DocEntry" =T1."OrderEntry"  AND T3."ObjType" =T1."BaseObject" 
+JOIN "RDR1" T4 ON T4."DocEntry" =T3."DocEntry" AND T4."LineNum"  =T1."OrderLine" 
+JOIN "ITT1" T6 ON T6."Code"=T4."ItemCode" AND T6."Father" IN 
+(SELECT A0."ItemCode" FROM "RDR1" A0 WHERE A0."ItemCode"= T6."Father" AND 
+A0."DocEntry"=T3."DocEntry" AND A0."TreeType" ='S')
+JOIN "RDR1"  T7 on T7."DocEntry" = T3."DocEntry" AND T7."ItemCode" = T6."Father"  
+JOIN "OITM" T5 on T5."ItemCode" =T7."ItemCode"  
+WHERE 
+T0."AbsEntry" IN (SELECT * FROM :TEST_OUTPUT) AND 
+T1."PickQtty">0 AND T1."PickStatus" ='Y' and T7."TreeType" ='S'
+AND T4."TreeType" ='I'
+AND T0."AbsEntry" NOT IN (SELECT IFNULL(T0."U_PListNo",'0') FROM "@AIS_PDE1" T0)
+)Q 
+ORDER BY Q."DocEntry",Q."LineNum" ;
+
+
+END

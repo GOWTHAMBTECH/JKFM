@@ -1,0 +1,33 @@
+﻿CREATE PROCEDURE "@AIS_BillDelivery_GetDocTotal_CreditCheck" (IN DocEntry varchar(5000), IN DocDueDate varchar(5000)) 
+AS
+PreSalesEntry varchar(5000):= '';
+Unit varchar(5000):= '';
+ 
+BEGIN
+
+
+SELECT sum(((T1."Quantity" * T5."SalPackUn" ) * T2."Price" )+(((T1."Quantity" * T5."SalPackUn" ) * T2."Price" )
+* IFNULL(T4."Rate", 0.0) / 100)) as "order value",T3."Balance",T3."CreditLine",
+
+
+sum(((T1."Quantity" * T5."SalPackUn" ) * T2."Price" )+(((T1."Quantity" * T5."SalPackUn" ) * T2."Price" )
+* IFNULL(T4."Rate", 0.0) / 100)) + T3."Balance" as "Total Balance",
+
+case when IFNULL(T3."CreditLine",0)<(sum(((T1."Quantity" * T5."SalPackUn" ) * T2."Price" )+(((T1."Quantity" * T5."SalPackUn" ) * T2."Price" )
+* IFNULL(T4."Rate", 0.0) / 100)) + T3."Balance" ) then 'FALSE'
+else 'TRUE' end as "Credit Check"
+
+
+FROM ORDR T0 INNER JOIN RDR1 T1 ON T1."DocEntry" = T0."DocEntry" 
+INNER JOIN ITM1 T2 ON T2."ItemCode" = 
+T1."ItemCode" INNER JOIN OITM T5 ON T5."ItemCode"=T1."ItemCode" 
+INNER JOIN OCRD T3 ON T3."CardCode" = T0."CardCode" AND T3."ListNum" = t2."PriceList" 
+LEFT OUTER JOIN OSTC T4 ON T4."Code" = T1."TaxCode" 
+
+WHERE T0."DocNum" = :DocEntry
+AND T0."DocDueDate" = :DocDueDate
+
+GROUP BY ---T1."Quantity",T5."SalPackUn",T2."Price",T4."Rate",
+T3."Balance",T3."CreditLine";
+
+END;

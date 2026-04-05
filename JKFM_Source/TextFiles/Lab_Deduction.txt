@@ -1,0 +1,19 @@
+﻿DO BEGIN
+
+DECLARE TokenNo NVARCHAR(100) = '[%1]';
+DECLARE Types NVARCHAR(100) = '[%2]';
+DECLARE DocEntry NVARCHAR(100) = '[%3]';
+
+IF :Types = 'Add' THEN
+
+Select ROW_NUMBER() OVER(ORDER BY B."LineId") AS "NE_#",B."U_AVA_ANALYSIS" AS "NE_Analysis",B."U_AVA_ACTUALVALUE" AS "NE_Actual Value",B."U_AVA_UNIT" AS "NE_Unit",B."U_AVA_DEDUCTIONAMOUNT" AS "NE_Deduction Amount",B."U_AVA_QTY" AS "NE_Quantity",B."U_AVA_STANDARD" AS "NE_Standard Parameter",B."U_AVA_REMARKS" AS "NE_Remarks",B."U_AVA_SAMPLE" AS "NE_Sample",B."U_AVA_QC_LEVEL" AS "NE_QC Level"
+from "@AVA_OPLM" A inner join "@AVA_PLM1" B on A."DocEntry" = B."DocEntry" where A."U_AVA_TOKENNO" = :TokenNo AND B."U_AVA_SAMPLE" = '2';
+
+ELSEIF :Types = 'Load' THEN
+
+Select ROW_NUMBER() OVER(ORDER BY "U_AVA_DocEntry") AS "NE_#","U_AVA_AnlysNme" AS "NE_Analysis","U_AVA_ActVal" AS "NE_Actual Value","U_AVA_Unit" AS "NE_Unit","U_AVA_DedAmt" AS "NE_Deduction Amount","U_AVA_Qty" AS "NE_Quantity","U_AVA_StdPar" AS "NE_Standard Parameter","U_AVA_Remarks" AS "NE_Remarks","U_AVA_Sample" AS "NE_Sample","U_AVA_QCLevel" AS "NE_QC Level" 
+from "@AVA_DED1" where "U_AVA_DocEntry" = :DocEntry;
+
+END IF;
+
+END

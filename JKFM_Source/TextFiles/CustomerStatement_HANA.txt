@@ -1,0 +1,35 @@
+﻿DO BEGIN
+
+Declare FCC NVARCHAR(100) = '%1';
+Declare TCC NVARCHAR(100) = '%2';
+Declare FromD Date = '%3';
+Declare ToD Date = '%4';
+Declare Status NVARCHAR(8000) = '';
+Declare SelectS NVARCHAR(100) = '';
+Declare BPGroup NVARCHAR(100) = '%5';
+Declare CCMail NVARCHAR(1000) = '%6';
+
+Select ROW_NUMBER() OVER(Order By Z."NES_CardCode") AS "NES_#",*
+from (select distinct :SelectS as "CK_Select",
+R."CardCode" AS "NES_CardCode",R."CardName" AS "NES_CardName",R."CntctPrsn" as "NE_ContactPerson",
+R."Cellular" AS "NE_Cellular",
+
+(SELECT "GroupName" FROM "OCRG" WHERE "GroupCode"=R."GroupCode") as "NE_GroupName",
+--R."U_AVA_CUS_TYPE" as "CustomerType",
+(Select IFNULL(SUM(A."Debit"-A."Credit"),0) as "opening" from "JDT1" A where A."RefDate"<:FromD and A."ShortName"=R."CardCode")as "NE_Opening",
+(select IFNULL(SUM(A."Debit"),0) from "JDT1" A where A."RefDate">=:FromD and A."RefDate"<=:ToD and A."ShortName"=R."CardCode") as "NE_Debit",
+(select IFNULL(SUM(A."Credit"),0) from "JDT1" A where A."RefDate">=:FromD and A."RefDate"<=:ToD and A."ShortName"=R."CardCode") as "NE_Credit" ,
+(Select IFNULL(SUM(A."Debit"-A."Credit"),0)as "closing balance" from JDT1 A where A."RefDate"<=:Tod and A."ShortName"=R."CardCode")as "NE_Closing",
+R."E_Mail" as "E_Email-ID",:CCMail AS "E_CC Mail-ID",:Status as "E_Status" from JDT1 B
+inner join OCRD R on R."CardCode"=B."ShortName"
+where (:FromD='' or B."RefDate">=:FromD) and (:ToD='' or B."RefDate"<=:ToD) and
+(:FCC='' or R."CardCode">=:FCC) and (:TCC='' or R."CardCode"<=:TCC)
+and (:BPGroup='' or R."GroupCode"=(SELECT "GroupCode" FROM OCRG WHERE "GroupName"=:BPGroup))
+--and (@BPType='' or R.U_AVA_CUS_TYPE=@BPType)
+group by R."CardCode",R."CardName",R."CntctPrsn",R."Cellular",R."GroupCode",
+--R.U_AVA_CUS_TYPE,
+B."Debit" ,B."Credit",R."E_Mail")Z
+Where IFNULL(Z."NE_Closing",0) > 0
+Order by Z."NES_CardCode";
+
+END

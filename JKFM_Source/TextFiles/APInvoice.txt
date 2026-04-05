@@ -1,0 +1,13 @@
+﻿DO BEGIN
+
+DECLARE Types NVARCHAR(100) = '[%1]';
+DECLARE DocEntry NVARCHAR(100) = '[%2]';
+DECLARE CardCode NVARCHAR(100) = '[%3]';
+
+IF :Types = 'Insurance' THEN
+
+Select TOP 1 "ExpnsCode",(Select TOP 1 "Code" from "OSTC" where "U_AVA_INSURANCE" = 'Y') AS "TaxCode",(Select "U_AVA_INSURANCEAMT" FROM "OCRD" where "CardCode" = :CardCode) AS "Amount" from "OEXD" where "U_AVA_INSURANCE" = 'Y';
+
+END IF;
+
+END
