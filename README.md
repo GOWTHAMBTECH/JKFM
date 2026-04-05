@@ -1,1 +1,2 @@
-# JKFM
+# jkfm-addon
+JKFM addon
